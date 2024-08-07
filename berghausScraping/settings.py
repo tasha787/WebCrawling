@@ -22,11 +22,21 @@ ROBOTSTXT_OBEY = True
 
 # Add this line to your settings.py file
 ITEM_PIPELINES = {
-    'berghausScraping.pipelines.BerghauscrawlPipeline': 300,
+    #'berghausScraping.pipelines.BerghauscrawlPipeline': 300,
+     'berghausScraping.pipelines.FatbraincrawlerPipeline': 300,
 }
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
+
+DOWNLOADER_MIDDLEWARES = {
+    'berghausScraping.middlewares.BerghausscrapingDownloaderMiddleware': 543,
+    'berghausScraping.middlewares.RandomUserAgentMiddleware': 543,
+    'berghausScraping.middlewares.ProxyMiddleware': 543,
+    # Uncomment the following lines if needed
+    # 'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+    # 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
+}
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay

@@ -1,46 +1,27 @@
-# Define here the models for your spider middleware
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-
+import random
+import base64
+import os
 from scrapy import signals
-
-# useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
+from random import choice
+from berghausScraping.proxies import PROXIES, UK_PROXIES
 
 
 class BerghausscrapingSpiderMiddleware:
-    # Not all methods need to be defined. If a method is not defined,
-    # scrapy acts as if the spider middleware does not modify the
-    # passed objects.
-
     @classmethod
     def from_crawler(cls, crawler):
-        # This method is used by Scrapy to create your spiders.
         s = cls()
         crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
         return s
 
     def process_spider_input(self, response, spider):
-        # Called for each response that goes through the spider
-        # middleware and into the spider.
-
-        # Should return None or raise an exception.
         return None
 
     def process_spider_output(self, response, result, spider):
-        # Called with the results returned from the Spider, after
-        # it has processed the response.
-
-        # Must return an iterable of Request, or item objects.
         for i in result:
             yield i
 
     def process_spider_exception(self, response, exception, spider):
-        # Called when a spider or process_spider_input() method
-        # (from other spider middleware) raises an exception.
-
-        # Should return either None or an iterable of Request or item objects.
         pass
 
     def process_start_requests(self, start_requests, spider):
@@ -57,47 +38,61 @@ class BerghausscrapingSpiderMiddleware:
 
 
 class BerghausscrapingDownloaderMiddleware:
-    # Not all methods need to be defined. If a method is not defined,
-    # scrapy acts as if the downloader middleware does not modify the
-    # passed objects.
-
     @classmethod
     def from_crawler(cls, crawler):
-        # This method is used by Scrapy to create your spiders.
         s = cls()
         crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
+        s.retry_times = crawler.settings.getint('RETRY_TIMES', 20)
+        s.retry_http_codes = set(crawler.settings.getlist('RETRY_HTTP_CODES', [403, 500, 502, 503, 504, 572]))
         return s
 
     def process_request(self, request, spider):
-        # Called for each request that goes through the downloader
-        # middleware.
-
-        # Must either:
-        # - return None: continue processing this request
-        # - or return a Response object
-        # - or return a Request object
-        # - or raise IgnoreRequest: process_exception() methods of
-        #   installed downloader middleware will be called
         return None
 
     def process_response(self, request, response, spider):
-        # Called with the response returned from the downloader.
-
-        # Must either;
-        # - return a Response object
-        # - return a Request object
-        # - or raise IgnoreRequest
+        if response.status in self.retry_http_codes:
+            reason = f"HTTP status code {response.status}"
+            return self._retry(request, reason, spider)
         return response
 
     def process_exception(self, request, exception, spider):
-        # Called when a download handler or a process_request()
-        # (from other downloader middleware) raises an exception.
+        return self._retry(request, exception, spider)
 
-        # Must either:
-        # - return None: continue processing this exception
-        # - return a Response object: stops process_exception() chain
-        # - return a Request object: stops process_exception() chain
-        pass
+    def _retry(self, request, reason, spider):
+        retries = request.meta.get('retry_times', 0) + 1
+        if retries <= self.retry_times:
+            spider.logger.info(f"Retrying {request.url} (failed {retries} times)")
+            request.meta['retry_times'] = retries
+            return request
+        else:
+            spider.logger.error(f"Gave up retrying {request.url} (failed {retries} times)")
+            return None
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+class ProxyMiddleware:
+    def __init__(self):
+        self.proxies = UK_PROXIES
+
+    def get_random_proxy(self):
+        return choice(self.proxies)
+
+    def process_request(self, request, spider):
+        proxy = self.get_random_proxy()
+        proxy_str = f"http://{proxy['username']}:{proxy['password']}@{proxy['host']}:{proxy['port']}"
+        request.meta['proxy'] = proxy_str
+        print(request.meta['proxy'])
+
+
+class RandomUserAgentMiddleware:
+    def __init__(self):
+        self.user_agents = self.load_user_agents()
+
+    def load_user_agents(self):
+        file_path = os.path.join(os.path.dirname(__file__), 'user_agents.txt')
+        with open(file_path, 'r') as f:
+            return [line.strip() for line in f if line.strip()]
+
+    def process_request(self, request, spider):
+        request.headers['User-Agent'] = random.choice(self.user_agents)
