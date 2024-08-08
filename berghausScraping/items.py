@@ -52,5 +52,6 @@ class FatbraincrawlerItem(scrapy.Item):
     barcode_type = scrapy.Field()
     color = scrapy.Field()
     size = scrapy.Field()
+    isPriceExcVAT = scrapy.Field()
     hasVariant = scrapy.Field()
     available_option = scrapy.Field()

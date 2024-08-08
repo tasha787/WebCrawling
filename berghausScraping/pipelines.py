@@ -43,7 +43,7 @@ class FatbraincrawlerPipeline:
     def open_spider(self, spider):
         self.csv_file = open('fatBrain_crawl.csv', 'w', newline='')
         self.csv_writer = csv.DictWriter(self.csv_file, fieldnames=[
-            "has_variant", "product_url", "name", "sku", "mpn", "availability", "price", "description", "image_array","brand", "image", "barcode", "barcode_type", "color", "size", "available_option"
+            "has_variant", "product_url", "name", "sku", "mpn", "availability", "price", "description", "image_array","brand", "image", "barcode", "barcode_type", "color", "size", "isPriceExcVAT", "available_option"
         ])
         self.csv_writer.writeheader()
 
