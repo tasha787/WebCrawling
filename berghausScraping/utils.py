@@ -10,6 +10,7 @@ def clean_text(text):
         text = text.strip()
         text = re.sub(r'\s+', ' ', text)
     return text
+
 def barcode_type(string):
     length= len(string)
     if length == 13 or length == 8:
@@ -17,4 +18,4 @@ def barcode_type(string):
     elif  length == 12 or length == 11:
         return "UPC"
     elif length == 14:
-        return "gtin"
+        return "GTIN"

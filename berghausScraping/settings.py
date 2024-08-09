@@ -17,7 +17,7 @@ NEWSPIDER_MODULE = 'berghausScraping.spiders'
 #USER_AGENT = 'berghausScraping (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 
 # Add this line to your settings.py file
@@ -30,9 +30,14 @@ ITEM_PIPELINES = {
 #CONCURRENT_REQUESTS = 32
 
 DOWNLOADER_MIDDLEWARES = {
-    'berghausScraping.middlewares.BerghausscrapingDownloaderMiddleware': 543,
-    'berghausScraping.middlewares.RandomUserAgentMiddleware': 543,
-    'berghausScraping.middlewares.ProxyMiddleware': 543,
+    # 'berghausScraping.middlewares.RandomUserAgentMiddleware': 543,
+    # 'berghausScraping.middlewares.ProxyMiddleware': 544,
+    # 'berghausScraping.middlewares.BerghausscrapingDownloaderMiddleware': 545,
+
+    # 'berghausScraping.middlewares.CustomHeadersMiddleware': 546,
+    # 'berghausScraping.middlewares.BerghausscrapingDownloaderMiddleware': 543,
+    # 'berghausScraping.middlewares.RandomUserAgentMiddleware': 543,
+    # 'berghausScraping.middlewares.ProxyMiddleware': 543,
     # Uncomment the following lines if needed
     # 'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
     # 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
@@ -69,6 +74,8 @@ DOWNLOADER_MIDDLEWARES = {
 #DOWNLOADER_MIDDLEWARES = {
 #    'berghausScraping.middlewares.BerghausscrapingDownloaderMiddleware': 543,
 #}
+
+
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
