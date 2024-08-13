@@ -26,13 +26,24 @@ ITEM_PIPELINES = {
      'berghausScraping.pipelines.FatbraincrawlerPipeline': 300,
 }
 
+
+
+# FEEDS = {
+#     'nike.csv': {
+#         'format': 'csv',
+#         'overwrite': True,
+#     },
+# }
+
+
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
+DOWNLOAD_DELAY = 0.25
 
 DOWNLOADER_MIDDLEWARES = {
-    # 'berghausScraping.middlewares.RandomUserAgentMiddleware': 543,
-    # 'berghausScraping.middlewares.ProxyMiddleware': 544,
-    # 'berghausScraping.middlewares.BerghausscrapingDownloaderMiddleware': 545,
+     'berghausScraping.middlewares.RandomUserAgentMiddleware': 543,
+     'berghausScraping.middlewares.ProxyMiddleware': 543,
+     'berghausScraping.middlewares.BerghausscrapingDownloaderMiddleware': 545,
 
     # 'berghausScraping.middlewares.CustomHeadersMiddleware': 546,
     # 'berghausScraping.middlewares.BerghausscrapingDownloaderMiddleware': 543,

@@ -22,20 +22,20 @@
 # useful for handling different item types with a single interface
 import csv
 from itemadapter import ItemAdapter
-class BerghauscrawlPipeline:
-    def open_spider(self, spider):
-        self.csv_file = open('berghaus_crawl.csv', 'w', newline='')
-        self.csv_writer = csv.DictWriter(self.csv_file, fieldnames=[
-            "product_url", "name", "sku", "mpn", "availability", "price", "description", "image", "image_array", "size", "color", "brand", "has_variant"
-        ])
-        self.csv_writer.writeheader()
+# class BerghauscrawlPipeline:
+#     def open_spider(self, spider):
+#         self.csv_file = open('berghaus_crawl.csv', 'w', newline='')
+#         self.csv_writer = csv.DictWriter(self.csv_file, fieldnames=[
+#             "product_url", "name", "sku", "mpn", "availability", "price", "description", "image", "image_array", "size", "color", "brand", "has_variant"
+#         ])
+#         self.csv_writer.writeheader()
 
-    def close_spider(self, spider):
-        self.csv_file.close()
+#     def close_spider(self, spider):
+#         self.csv_file.close()
 
-    def process_item(self, item, spider):
-        self.csv_writer.writerow(item)
-        return item
+#     def process_item(self, item, spider):
+#         self.csv_writer.writerow(item)
+#         return item
 
 
 

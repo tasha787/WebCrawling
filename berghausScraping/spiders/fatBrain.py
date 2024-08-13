@@ -1,5 +1,6 @@
 import scrapy
 import json
+import csv
 import re
 from html import unescape
 from berghausScraping.items import FatbraincrawlerItem
@@ -55,18 +56,22 @@ class FatbrainSpider(scrapy.Spider):
             for variant in data:
                 if isinstance(variant, dict):
                     offers_list = variant.get('offers', [])
+                    has_variant = len(offers_list) > 1
                     for offer in offers_list:
                         item = FatbraincrawlerItem()
-                        item['has_variant'] = len(offers_list) > 1
-                        item['product_url'] = f"{response.url}?ah={offer.get('sku', '')}"
+                        item['has_variant'] = has_variant
+                        if has_variant:
+                           item['product_url'] = f"{response.url}?ah={offer.get('sku', '')}"
+                        else:
+                           item['product_url'] = response.url
                         item['name'] = variant.get('name', '')
                         item['sku'] = offer.get('sku', '')
                         item['mpn'] = offer.get('mpn', '')
-                        item['availability'] = bool(offer.get('availability', ''))
+                        item['availability'] = offer.get('availability') == "http://schema.org/InStock"
                         item['price'] = float(offer.get('price', 0))
                         item['description'] = description
                         item['image_array'] = variant.get('image', '')
-                        item['brand'] = variant.get('brand', {}).get('name', '')
+                        item['brand'] = clean_text(variant.get('brand', {}).get('name', ''))
 
                         image_url = response.xpath(f"//*[@sku='{offer.get('sku', '')}']/img/@src").get()
                         if not image_url:
@@ -83,7 +88,7 @@ class FatbrainSpider(scrapy.Spider):
                         available_option_elements = response.xpath(f"//span[@title='{sku}']/text()").getall()
                         if available_option_elements:
                             available_option_text = ' '.join(available_option_elements)
-                            item['available_option'] = f" {available_option_text}"
+                            item['available_option'] = f"{item['name']} {available_option_text}"
                         else:
                             item['available_option'] = item['name']
 
