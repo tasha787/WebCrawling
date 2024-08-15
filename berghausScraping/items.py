@@ -55,3 +55,21 @@ class FatbraincrawlerItem(scrapy.Item):
     isPriceExcVAT = scrapy.Field()
     hasVariant = scrapy.Field()
     available_option = scrapy.Field()
+
+
+class ZatuGamesItem(scrapy.Item):
+    url = scrapy.Field()
+    title = scrapy.Field()
+    price = scrapy.Field()
+    sku = scrapy.Field()
+    availability = scrapy.Field()
+    image = scrapy.Field()
+    images = scrapy.Field()
+    description = scrapy.Field()
+    barcode = scrapy.Field()
+    barcode_type = scrapy.Field()
+    mpn = scrapy.Field()
+    size = scrapy.Field()
+    color = scrapy.Field()
+    isPriceExcVAT = scrapy.Field()
+    has_variant = scrapy.Field()

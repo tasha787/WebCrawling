@@ -11,6 +11,7 @@ BOT_NAME = 'berghausScraping'
 
 SPIDER_MODULES = ['berghausScraping.spiders']
 NEWSPIDER_MODULE = 'berghausScraping.spiders'
+REDIRECT_ENABLED = True
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -23,17 +24,18 @@ ROBOTSTXT_OBEY = False
 # Add this line to your settings.py file
 ITEM_PIPELINES = {
     #'berghausScraping.pipelines.BerghauscrawlPipeline': 300,
-     'berghausScraping.pipelines.FatbraincrawlerPipeline': 300,
+    #  'berghausScraping.pipelines.FatbraincrawlerPipeline': 300,
+    'berghausScraping.pipelines.ZatugamescrawlerPipeline': 1,
 }
 
 
 
-# FEEDS = {
-#     'nike.csv': {
-#         'format': 'csv',
-#         'overwrite': True,
-#     },
-# }
+FEEDS = {
+    'zatu.csv': {
+        'format': 'csv',
+        'overwrite': True,
+    },
+}
 
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)

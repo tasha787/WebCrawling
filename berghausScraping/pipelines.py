@@ -39,17 +39,34 @@ from itemadapter import ItemAdapter
 
 
 
-class FatbraincrawlerPipeline:
+# class FatbraincrawlerPipeline:
+#     def open_spider(self, spider):
+#         self.csv_file = open('fatBrain_crawl.csv', 'w', newline='')
+#         self.csv_writer = csv.DictWriter(self.csv_file, fieldnames=[
+#             "has_variant", "product_url", "name", "sku", "mpn", "availability", "price", "description", "image_array","brand", "image", "barcode", "barcode_type", "color", "size", "isPriceExcVAT", "available_option"
+#         ])
+#         self.csv_writer.writeheader()
+
+#     def close_spider(self, spider):
+#         self.csv_file.close()
+
+#     def process_item(self, item, spider):
+#         self.csv_writer.writerow(item)
+#         return item
+
+
+class ZatugamescrawlerPipeline:
     def open_spider(self, spider):
-        self.csv_file = open('fatBrain_crawl.csv', 'w', newline='')
-        self.csv_writer = csv.DictWriter(self.csv_file, fieldnames=[
-            "has_variant", "product_url", "name", "sku", "mpn", "availability", "price", "description", "image_array","brand", "image", "barcode", "barcode_type", "color", "size", "isPriceExcVAT", "available_option"
+        self.file = open('zatuGames.csv', 'w', newline='', encoding='utf-8')
+        self.writer = csv.DictWriter(self.file, fieldnames=[
+            'url', 'title', 'price', 'sku', 'availability', 'image', 'images',
+            'description', 'barcode', 'barcode_type', 'mpn', 'size', 'color', 'isPriceExcVAT', 'has_variant'
         ])
-        self.csv_writer.writeheader()
+        self.writer.writeheader()
 
     def close_spider(self, spider):
-        self.csv_file.close()
+        self.file.close()
 
     def process_item(self, item, spider):
-        self.csv_writer.writerow(item)
+        self.writer.writerow(item)
         return item

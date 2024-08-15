@@ -43,7 +43,7 @@ class BerghausscrapingDownloaderMiddleware:
         s = cls()
         crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
         s.retry_times = crawler.settings.getint('RETRY_TIMES', 20)
-        s.retry_http_codes = set(crawler.settings.getlist('RETRY_HTTP_CODES', [403, 500, 502, 503, 504, 572]))
+        s.retry_http_codes = set(crawler.settings.getlist('RETRY_HTTP_CODES', [403, 500, 502, 503, 504, 525, 572]))
         return s
 
     def process_request(self, request, spider):
@@ -73,7 +73,7 @@ class BerghausscrapingDownloaderMiddleware:
 
 class ProxyMiddleware:
     def __init__(self):
-        self.proxies = PROXIES
+        self.proxies = UK_PROXIES
 
     def get_random_proxy(self):
         return choice(self.proxies)
