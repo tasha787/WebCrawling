@@ -23,19 +23,19 @@ ROBOTSTXT_OBEY = False
 
 # Add this line to your settings.py file
 ITEM_PIPELINES = {
-    #'berghausScraping.pipelines.BerghauscrawlPipeline': 300,
+    'berghausScraping.pipelines.BerghauscrawlPipeline': 300,
     #  'berghausScraping.pipelines.FatbraincrawlerPipeline': 300,
-    'berghausScraping.pipelines.ZatugamescrawlerPipeline': 1,
+    # 'berghausScraping.pipelines.ZatugamescrawlerPipeline': 1,
 }
 
 
 
-FEEDS = {
-    'zatu.csv': {
-        'format': 'csv',
-        'overwrite': True,
-    },
-}
+# FEEDS = {
+#     'zatu.csv': {
+#         'format': 'csv',
+#         'overwrite': True,
+#     },
+# }
 
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)

@@ -1,53 +1,70 @@
 import scrapy
 import json
-import csv
 import re
-import pdb
 from html import unescape
-class ZatuGamesSpider(scrapy.Spider):
+from berghausScraping.items import BerghauscrawlItem
+from berghausScraping.utils import clean_text, barcode_type
+
+class QuotesSpider(scrapy.Spider):
     name = "check"
-    start_urls = ["https://www.board-game.co.uk/product/unmatched-ingen-vs-the-raptors/"]
+    start_urls = ["https://www.berghaus.com/women-s-linear-landscape-super-stretch-tee-red/13649742.html?variation=13649757"]
+
     def parse(self, response):
-      try:
-          url = response.url
-          title = response.xpath("//h1[contains(@class,'product-title')]/text()").get()
-          price = response.xpath("//div[contains(@class,'price-box-now')]/@data-now").get()
-          sku = response.xpath("//span[@class='sku']/text()").get()
-          availability_text = response.xpath("//span[@class='stock in-stock']/text()").get()
-          availability = "IN STOCK" in (availability_text or "").upper()
-        #   pdb.set_trace()
-          data = response.xpath("//script[@class='yoast-schema-graph']/text()").get()
-          json_data = json.loads(data)
-          image = json_data.get('@graph')[1].get('url')
-          if not image:
-              image = response.xpath("//div[@class='product-image-container']/img/@src").get()
-          images = response.xpath("//div[contains(@class,'product-image-thumbs')]//@src").getall()
-          description = response.xpath("//header[@class='perfect-products-static-header']/following-sibling::p//text()").getall()
-          if not description:
-              description = response.xpath("//div[@id='tab-description']//p//text()").getall()
-          description = (' '.join(description))
-          variant = response.xpath("//ul[@id='vgs-switch-variations']/li/a/@href").getall()
-          has_variant = bool(variant)
-          barcode = ""
-          mpn = ""
-          size = ""
-          color = ""
-          isPriceExcVAT = False
-          yield {
-              'url': url,
-              'title': title,
-              'price': price,
-              'sku': sku,
-              'availability': availability,
-              'image': image,
-              'images': images,
-              'description': description,
-              'barcode': barcode,
-              'mpn': mpn,
-              'size': size,
-              'color': color,
-              'isPriceExcVAT': isPriceExcVAT,
-              'has_variant': has_variant
-          }
-      except Exception:
-          print("Error occurred in parse_product_details function")
+        try:
+            variant_data = response.xpath("//script[@id='productSchema']/text()").get()
+            if variant_data:
+                try:
+                    data = json.loads(variant_data)
+                except json.JSONDecodeError:
+                    print("Failed to decode JSON from variant data")
+                    return
+
+            description = response.xpath("(//div[@class='athenaProductPageSynopsisContent']/p/text())[1]").get()
+            description = clean_text(description)
+            image_array = response.xpath("//button[@type='button']/img/@src").extract()
+            size = response.xpath("//span[@class = 'srf-hide']/parent::button/text()").get()
+            size = clean_text(size)
+            brand = response.xpath("//div[@data-product-brand]/@data-product-brand").get()
+            availability_text = response.xpath("//span[contains(@class, 'stock')]/text()").get()
+            availability = "In Stock" in (availability_text or "")
+
+            variants = data.get('hasVariant', []) if variant_data else []
+            has_variant = len(variants) != 1
+
+            for variant in variants:
+                try:
+                    item = BerghauscrawlItem()
+                    item['product_url'] = self.format_url(response.url, variant.get('sku'))
+                    item['name'] = variant.get('name')
+                    item['sku'] = variant.get('sku')
+                    item['mpn'] = variant.get('mpn')
+                    item['availability'] = availability
+                    item['price'] = float(variant.get('offers', {}).get('price'))
+                    item['description'] = description
+                    item['image'] = variant.get('image')
+                    item['image_array'] = image_array
+                    item['size'] = size
+                    item['brand'] = brand
+                    item['has_variant'] = bool(has_variant)
+                    item['barcode'] = ""
+                    item['barcode_type'] = ""
+                    item['isPriceExcVAT'] = False
+
+                    # Extract color from name using regex
+                    name = variant.get('name', '')
+                    color_match = re.search(r'-(.*?) - \d+', name)
+                    color = color_match.group(1).strip() if color_match else ""
+                    item['color'] = clean_text(color)
+
+                    yield item
+                except Exception:
+                    print("Error occurred while processing variant")
+
+        except Exception:
+            print("Error occurred in parse_product_details function")
+
+    def format_url(self, base_url, ssid):
+        try:
+            return f"{base_url}?variation={ssid}"
+        except Exception:
+            print("Error occurred in format_url function")

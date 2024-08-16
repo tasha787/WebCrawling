@@ -34,6 +34,9 @@ class BerghauscrawlItem(scrapy.Item):
     color = scrapy.Field()
     brand = scrapy.Field()
     has_variant = scrapy.Field()
+    barcode = scrapy.Field()
+    barcode_type = scrapy.Field()
+    isPriceExcVAT = scrapy.Field()
 
 
 class FatbraincrawlerItem(scrapy.Item):

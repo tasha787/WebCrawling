@@ -22,20 +22,20 @@
 # useful for handling different item types with a single interface
 import csv
 from itemadapter import ItemAdapter
-# class BerghauscrawlPipeline:
-#     def open_spider(self, spider):
-#         self.csv_file = open('berghaus_crawl.csv', 'w', newline='')
-#         self.csv_writer = csv.DictWriter(self.csv_file, fieldnames=[
-#             "product_url", "name", "sku", "mpn", "availability", "price", "description", "image", "image_array", "size", "color", "brand", "has_variant"
-#         ])
-#         self.csv_writer.writeheader()
+class BerghauscrawlPipeline:
+    def open_spider(self, spider):
+        self.csv_file = open('berghaus_crawl.csv', 'w', newline='')
+        self.csv_writer = csv.DictWriter(self.csv_file, fieldnames=[
+            "product_url", "name", "sku", "mpn", "availability", "price", "description", "image", "image_array", "size", "color", "brand", "has_variant", "barcode", "barcode_type", "isPriceExcVAT"
+        ])
+        self.csv_writer.writeheader()
 
-#     def close_spider(self, spider):
-#         self.csv_file.close()
+    def close_spider(self, spider):
+        self.csv_file.close()
 
-#     def process_item(self, item, spider):
-#         self.csv_writer.writerow(item)
-#         return item
+    def process_item(self, item, spider):
+        self.csv_writer.writerow(item)
+        return item
 
 
 
@@ -55,18 +55,18 @@ from itemadapter import ItemAdapter
 #         return item
 
 
-class ZatugamescrawlerPipeline:
-    def open_spider(self, spider):
-        self.file = open('zatuGames.csv', 'w', newline='', encoding='utf-8')
-        self.writer = csv.DictWriter(self.file, fieldnames=[
-            'url', 'title', 'price', 'sku', 'availability', 'image', 'images',
-            'description', 'barcode', 'barcode_type', 'mpn', 'size', 'color', 'isPriceExcVAT', 'has_variant'
-        ])
-        self.writer.writeheader()
+# class ZatugamescrawlerPipeline:
+#     def open_spider(self, spider):
+#         self.file = open('zatuGames.csv', 'w', newline='', encoding='utf-8')
+#         self.writer = csv.DictWriter(self.file, fieldnames=[
+#             'url', 'title', 'price', 'sku', 'availability', 'image', 'images',
+#             'description', 'barcode', 'barcode_type', 'mpn', 'size', 'color', 'isPriceExcVAT', 'has_variant'
+#         ])
+#         self.writer.writeheader()
 
-    def close_spider(self, spider):
-        self.file.close()
+#     def close_spider(self, spider):
+#         self.file.close()
 
-    def process_item(self, item, spider):
-        self.writer.writerow(item)
-        return item
+#     def process_item(self, item, spider):
+#         self.writer.writerow(item)
+#         return item
